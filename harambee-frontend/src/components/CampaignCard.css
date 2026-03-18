@@ -1,0 +1,151 @@
+.campaign-card {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.campaign-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.cc-image {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+}
+
+.cc-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.campaign-card:hover .cc-image img {
+  transform: scale(1.05);
+}
+
+.cc-category {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+}
+
+.cc-featured {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--sun);
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: 'Sora', sans-serif;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+.cc-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0.6rem;
+}
+
+.cc-title {
+  font-size: 1.2rem;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+  margin: 0 0 0.25rem 0;
+}
+
+.cc-location {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.cc-desc {
+  font-size: 0.85rem;
+  color: var(--ink-mid);
+  line-height: 1.5;
+}
+
+.cc-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.cc-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.35rem;
+}
+
+.cc-raised {
+  font-weight: 700;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.92rem;
+  color: var(--grass);
+}
+
+.cc-pct {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.cc-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--ink);
+  font-weight: 600;
+  font-family: 'Sora', sans-serif;
+}
+
+.cc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.cc-organizer {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.avatar-sm {
+  width: 34px !important;
+  height: 34px !important;
+  font-size: 0.75rem !important;
+}
+
+.cc-by {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--ink-mid);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
