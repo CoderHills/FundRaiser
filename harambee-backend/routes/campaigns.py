@@ -1,22 +1,41 @@
 from flask import Blueprint, request, jsonify
 from extensions import db
 from models.campaign import Campaign, CampaignUpdate
+from models.user import User
 from schemas import campaign_schema, campaigns_schema
+from werkzeug.security import check_password_hash
+import jwt
+from functools import wraps
 
 campaigns_bp = Blueprint("campaigns", __name__, url_prefix="/api/campaigns")
 
 
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        from flask import current_app
+        token = None
+        if 'Authorization' in request.headers:
+            auth = request.headers['Authorization'].split()
+            if len(auth) == 2 and auth[0].lower() == 'bearer':
+                token = auth[1]
+        
+        if not token:
+            return jsonify({'message': 'token missing'}), 401
+        
+        try:
+            from flask import current_app
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = User.query.filter_by(id=data['user_id']).first()
+        except:
+            return jsonify({'message': 'token invalid'}), 401
+        
+        return f(current_user, *args, **kwargs)
+    return decorated
+
+
 @campaigns_bp.route("/", methods=["GET"])
 def list_campaigns():
-    """
-    GET /api/campaigns/
-    Query params:
-      - category  : filter by category id (e.g. medical)
-      - featured  : "true" to return only featured campaigns
-      - search    : search title or organizer (case-insensitive)
-      - page      : page number (default 1)
-      - per_page  : items per page (default 12, max 50)
-    """
     query = Campaign.query
 
     category = request.args.get("category")
@@ -57,7 +76,6 @@ def list_campaigns():
 
 @campaigns_bp.route("/<slug>", methods=["GET"])
 def get_campaign(slug):
-    """GET /api/campaigns/<slug>"""
     campaign = Campaign.query.filter_by(slug=slug).first_or_404(
         description=f"Campaign '{slug}' not found"
     )
@@ -65,13 +83,8 @@ def get_campaign(slug):
 
 
 @campaigns_bp.route("/", methods=["POST"])
-def create_campaign():
-    """
-    POST /api/campaigns/
-    Body (JSON):
-      title, slug, category_id, organizer, location,
-      target, image, description, story
-    """
+@token_required
+def create_campaign(current_user):
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"error": "Request body must be JSON"}), 400
@@ -105,7 +118,6 @@ def create_campaign():
 
 @campaigns_bp.route("/<slug>", methods=["PUT", "PATCH"])
 def update_campaign(slug):
-    """PUT/PATCH /api/campaigns/<slug>"""
     campaign = Campaign.query.filter_by(slug=slug).first_or_404()
     data = request.get_json(silent=True) or {}
 
@@ -124,21 +136,14 @@ def update_campaign(slug):
 
 @campaigns_bp.route("/<slug>", methods=["DELETE"])
 def delete_campaign(slug):
-    """DELETE /api/campaigns/<slug>"""
     campaign = Campaign.query.filter_by(slug=slug).first_or_404()
     db.session.delete(campaign)
     db.session.commit()
     return jsonify({"message": f"Campaign '{slug}' deleted"}), 200
 
 
-# ── Campaign Updates ──────────────────────────────────────────────────────────
-
 @campaigns_bp.route("/<slug>/updates", methods=["POST"])
 def add_update(slug):
-    """
-    POST /api/campaigns/<slug>/updates
-    Body: { text, date }
-    """
     campaign = Campaign.query.filter_by(slug=slug).first_or_404()
     data = request.get_json(silent=True) or {}
 

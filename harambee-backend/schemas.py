@@ -19,14 +19,13 @@ class DonationSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Donation
         load_instance = True
-        exclude = ("phone", "campaign")  # never expose raw phone numbers
+        exclude = ("phone", "campaign")
 
     donor_name = ma.auto_field()
 
-    # Mask donor name if anonymous
     def dump(self, obj, *args, **kwargs):
         data = super().dump(obj, *args, **kwargs)
-        if obj.anonymous:
+        if hasattr(obj, 'anonymous') and obj.anonymous:
             data["donor_name"] = "Anonymous"
         return data
 
@@ -58,7 +57,6 @@ class CampaignSchema(ma.SQLAlchemyAutoSchema):
 
 
 class CampaignListSchema(ma.SQLAlchemyAutoSchema):
-    """Lighter schema for list views — omits story and updates."""
 
     class Meta:
         model = Campaign
@@ -79,7 +77,6 @@ class CampaignListSchema(ma.SQLAlchemyAutoSchema):
         return min(round((obj.raised / obj.target) * 100), 100)
 
 
-# Singletons
 category_schema = CategorySchema()
 categories_schema = CategorySchema(many=True)
 

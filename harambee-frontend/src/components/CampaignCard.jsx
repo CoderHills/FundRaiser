@@ -3,7 +3,8 @@ import { CATEGORIES } from "../data/campaigns";
 import "./CampaignCard.css";
 
 export default function CampaignCard({ campaign, navigate, onDonate }) {
-  const cat = CATEGORIES.find((c) => c.id === campaign.category);
+  const cat = CATEGORIES.find((c) => c.id === campaign.category_id);
+
   const progress = pct(campaign.raised, campaign.target);
 
   return (
@@ -11,13 +12,12 @@ export default function CampaignCard({ campaign, navigate, onDonate }) {
       <div className="cc-image">
         <img src={campaign.image} alt={campaign.title} loading="lazy" />
         <div className="cc-category">
-          <span className={`tag ${getCategoryColor(campaign.category)}`}>
-            {cat?.label}
+          <span className={`tag ${getCategoryColor(campaign.category_id)}`}>
+
+            {cat?.label || campaign.category_id}
+
           </span>
         </div>
-        {campaign.featured && (
-          <div className="cc-featured">Featured</div>
-        )}
       </div>
 
       <div className="cc-body">
@@ -33,13 +33,12 @@ export default function CampaignCard({ campaign, navigate, onDonate }) {
             <span className="cc-raised">{formatKES(campaign.raised)} raised</span>
             <span className="cc-pct">{progress}%</span>
           </div>
-          {/* Stats removed */}
         </div>
 
         <div className="cc-footer">
           <div className="cc-organizer">
             <div className="avatar avatar-sm">
-              {campaign.organizer.split(" ").map((w) => w[0]).slice(0, 2).join("")}
+              {(campaign.organizer || '').split(" ").map((w) => w[0] || '').slice(0, 2).join("")}
             </div>
             <div>
               <div className="cc-by">By {campaign.organizer}</div>

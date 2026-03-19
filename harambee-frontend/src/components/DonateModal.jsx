@@ -4,10 +4,10 @@ import "./DonateModal.css";
 
 const QUICK_AMOUNTS = [500, 1000, 2000, 5000, 10000];
 const PAYMENT_METHODS = [
-  { id: "mpesa", label: "M-Pesa", icon: "📱", desc: "Lipa na M-Pesa" },
-  { id: "airtel", label: "Airtel Money", icon: "📲", desc: "Airtel Money Kenya" },
-  { id: "card", label: "Card", icon: "💳", desc: "Visa / Mastercard" },
-  { id: "paypal", label: "PayPal", icon: "🌐", desc: "International" },
+  { id: "mpesa", label: "M-Pesa", desc: "Lipa na M-Pesa" },
+  { id: "airtel", label: "Airtel Money", desc: "Airtel Money Kenya" },
+  { id: "card", label: "Card", desc: "Visa / Mastercard" },
+  { id: "paypal", label: "PayPal", desc: "International" },
 ];
 
 export default function DonateModal({ campaign, onClose }) {
@@ -44,7 +44,7 @@ export default function DonateModal({ campaign, onClose }) {
             <p className="dm-for">Donating to</p>
             <h3 className="dm-campaign-title">{campaign.title}</h3>
           </div>
-          <button className="dm-close" onClick={onClose}>✕</button>
+          <button className="dm-close" onClick={onClose}></button>
         </div>
 
         {step < 4 && (
@@ -232,7 +232,7 @@ export default function DonateModal({ campaign, onClose }) {
               </div>
               {method === "mpesa" && (
                 <div className="mpesa-note">
-                  📱 An M-Pesa STK push will be sent to <strong>{phone}</strong>. Enter your PIN to complete the donation.
+                  An M-Pesa STK push will be sent to <strong>{phone}</strong>. Enter your PIN to complete the donation.
                 </div>
               )}
             </div>

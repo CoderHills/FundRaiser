@@ -1,12 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext.jsx";
 import { CATEGORIES } from "../data/campaigns";
+import { createCampaign } from "../utils/api.js";
 import "./CreatePage.css";
 
 const STEPS = ["Basics", "Story", "Goal", "Payouts", "Review"];
 
 export default function CreatePage({ navigate }) {
+  const { user } = useAuth();
   const [step, setStep] = useState(0);
   const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("dashboard");
+    }
+  }, [user, navigate]);
   const [form, setForm] = useState({
     title: "",
     category: "",
@@ -18,7 +27,19 @@ export default function CreatePage({ navigate }) {
     phone: "",
     accountName: "",
     method: "mpesa",
+    image: null,
   });
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        set("image", reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -30,14 +51,39 @@ export default function CreatePage({ navigate }) {
     return true;
   };
 
-  const handleSubmit = () => {
-    setTimeout(() => setDone(true), 1000);
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      const data = {
+        title: form.title,
+        slug: form.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        category_id: form.category,
+        organizer: user.name, // Use the logged-in user's name
+        location: form.location,
+        target: parseInt(form.target),
+        days_left: 30,
+        description: form.description,
+        story: form.story,
+        image: form.image,
+      };
+      await createCampaign(data);
+      setDone(true);
+    } catch (error) {
+      alert('Failed to create campaign: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const [loading, setLoading] = useState(false);
 
   if (done) {
     return (
       <main className="create-page">
           <div className="create-success container-sm">
+            <div className="success-icon"></div>
+            <h2>Your campaign is live!</h2>
+            <p>Share your campaign link with friends and family.</p>
 
             <button className="btn btn-primary" onClick={() => navigate("dashboard")}>
               Go to Dashboard
@@ -142,9 +188,32 @@ export default function CreatePage({ navigate }) {
               <div className="form-group">
                 <label>Campaign photo / video</label>
                 <div className="upload-zone">
-                  
-                  <p>Drag & drop or <span>browse files</span></p>
-                  <small>JPG, PNG, MP4 · Max 50MB</small>
+                  {form.image ? (
+                    <div style={{ textAlign: 'center' }}>
+                      <img src={form.image} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px' }} />
+                      <button 
+                        type="button" 
+                        onClick={() => set("image", null)}
+                        style={{ marginTop: '10px', padding: '5px 10px', background: '#dc2626', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <input
+                        type="file"
+                        accept="image/*,video/*"
+                        onChange={handleImageChange}
+                        id="campaign-media"
+                        style={{ display: 'none' }}
+                      />
+                      <label htmlFor="campaign-media" style={{ cursor: 'pointer' }}>
+                        <p>Drag & drop or <span>browse files</span></p>
+                        <small>JPG, PNG, MP4 · Max 50MB</small>
+                      </label>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -209,9 +278,9 @@ export default function CreatePage({ navigate }) {
 
               <div className="payout-methods">
                 {[
-                  { id: "mpesa", label: "M-Pesa", icon: "📱" },
-                  { id: "bank", label: "Bank Account", icon: "🏦" },
-                  { id: "airtel", label: "Airtel Money", icon: "📲" },
+                  { id: "mpesa", label: "M-Pesa" },
+                  { id: "bank", label: "Bank Account" },
+                  { id: "airtel", label: "Airtel Money" },
                 ].map((pm) => (
                   <button
                     key={pm.id}
@@ -247,7 +316,7 @@ export default function CreatePage({ navigate }) {
               </div>
 
               <div className="verification-note">
-                🛡️ We may verify your identity to protect donors. This usually takes 24–48 hours for new accounts.
+                We may verify your identity to protect donors. This usually takes 24–48 hours for new accounts.
               </div>
             </div>
           )}

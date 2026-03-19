@@ -2,7 +2,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255,255,255,0.92);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
 }
@@ -58,7 +58,7 @@
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
   font-size: 0.93rem;
-  color: var(--ink-mid);
+  color: var(--ink-soft);
   padding: 0.45rem 0.9rem;
   border-radius: var(--radius-sm);
   transition: var(--transition);
@@ -70,11 +70,67 @@
 .nav-link:hover,
 .nav-link.active {
   color: var(--grass);
-  background: rgba(26,122,74,0.07);
+  background: rgba(0, 166, 81, 0.15);
 }
 
 .nav-links .btn {
   margin-left: 0.5rem;
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 166, 81, 0.15);
+  border-radius: 50px;
+  border: 1px solid rgba(0, 166, 81, 0.3);
+}
+
+.nav-user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.nav-greeting {
+  font-size: 0.7rem;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.nav-user-name {
+  font-size: 0.95rem;
+  color: var(--grass);
+  font-weight: 700;
+}
+
+.nav-logout {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--ink-soft);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-logout:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.nav-logout svg {
+  width: 14px;
+  height: 14px;
 }
 
 .nav-hamburger {
@@ -104,7 +160,7 @@
     position: absolute;
     top: 68px;
     left: 0; right: 0;
-    background: var(--white);
+    background: var(--surface);
     border-bottom: 1px solid var(--border);
     flex-direction: column;
     align-items: flex-start;

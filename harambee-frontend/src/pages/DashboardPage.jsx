@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext.jsx";
 import "../styles/global.css";
 
-export default function DashboardPage({ navigate }) {
-  const [isLogin, setIsLogin] = useState(true);
+export default function DashboardPage({ navigate, options }) {
+  const [isLogin, setIsLogin] = useState(options?.register ? false : true);
   const [formData, setFormData] = useState({
     phone: "",
     password: "",
@@ -14,12 +15,24 @@ export default function DashboardPage({ navigate }) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const { login, register } = useAuth();
+  const [error, setError] = useState('');
 
-    setTimeout(() => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      if (isLogin) {
+        await login(formData.email, formData.password);
+      } else {
+        await register(formData.email, formData.password, formData.name, formData.phone);
+      }
       navigate("home");
-    }, 1000);
+    } catch (err) {
+      setError(isLogin ? 'Incorrect email or password' : 'Registration failed. Please try again.');
+      setTimeout(() => setError(''), 3000);
+    }
   };
 
   const toggleMode = () => {
@@ -30,7 +43,7 @@ export default function DashboardPage({ navigate }) {
   return (
     <main className="auth-page" style={{ 
       minHeight: '100vh', 
-      background: 'linear-gradient(135deg, var(--grass-d) 0%, var(--grass) 100%)', 
+      background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f0fdf4 100%)', 
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center', 
@@ -114,13 +127,14 @@ export default function DashboardPage({ navigate }) {
 
           <div style={{ marginBottom: '1.25rem' }}>
             <label style={{ display: 'block', fontSize: '0.95rem', fontWeight: 600, color: '#374151', marginBottom: '0.5rem' }}>
-              Phone Number
+            {isLogin ? 'Email' : 'Phone Number'}
             </label>
+
             <input
-              type="tel"
-              placeholder="0712 345 678"
-              value={formData.phone}
-              onChange={(e) => handleInput('phone', e.target.value)}
+              type={isLogin ? "email" : "tel"}
+              placeholder={isLogin ? "name@gmail.com" : "0712 345 678"}
+              value={isLogin ? formData.email : formData.phone}
+              onChange={(e) => handleInput(isLogin ? 'email' : 'phone', e.target.value)}
               style={{
                 width: '100%',
                 padding: '0.875rem 1rem',
@@ -158,6 +172,18 @@ export default function DashboardPage({ navigate }) {
             />
           </div>
 
+          {error && (
+            <div style={{
+              background: '#fee2e2',
+              color: '#dc2626',
+              padding: '0.75rem',
+              borderRadius: '8px',
+              marginBottom: '1rem',
+              fontSize: '0.9rem'
+            }}>
+              {error}
+            </div>
+          )}
           <button
             type="submit"
             style={{

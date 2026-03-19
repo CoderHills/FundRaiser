@@ -6,6 +6,7 @@ import ExplorePage from "./pages/ExplorePage";
 import CampaignPage from "./pages/CampaignPage";
 import CreatePage from "./pages/CreatePage";
 import DashboardPage from "./pages/DashboardPage";
+import ProfilePage from "./pages/ProfilePage";
 import DonateModal from "./components/DonateModal";
 import "./styles/global.css";
 
@@ -13,10 +14,16 @@ export default function App() {
   const [page, setPage] = useState("home");
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [donateTarget, setDonateTarget] = useState(null);
+  const [dashboardOptions, setDashboardOptions] = useState(null);
 
   const navigate = (p, data = null) => {
     setPage(p);
-    if (data) setSelectedCampaign(data);
+    if (p === "dashboard" && data) {
+      setDashboardOptions(data);
+    } else {
+      setDashboardOptions(null);
+      if (data) setSelectedCampaign(data);
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -38,7 +45,8 @@ export default function App() {
         />
       )}
       {page === "create" && <CreatePage navigate={navigate} />}
-      {page === "dashboard" && <DashboardPage navigate={navigate} />}
+      {page === "dashboard" && <DashboardPage navigate={navigate} options={dashboardOptions} />}
+      {page === "profile" && <ProfilePage navigate={navigate} onDonate={setDonateTarget} />}
 
       <Footer navigate={navigate} />
 

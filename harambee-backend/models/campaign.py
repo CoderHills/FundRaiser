@@ -29,7 +29,7 @@ class Campaign(db.Model):
     days_left = db.Column(db.Integer, default=30)
     verified = db.Column(db.Boolean, default=False)
     featured = db.Column(db.Boolean, default=False)
-    image = db.Column(db.String(500))
+    image = db.Column(db.Text)
     description = db.Column(db.Text)
     story = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))

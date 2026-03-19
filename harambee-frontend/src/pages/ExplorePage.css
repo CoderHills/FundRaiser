@@ -1,5 +1,5 @@
 .explore-hero {
-  background: linear-gradient(135deg, var(--grass-d), var(--grass));
+  background: linear-gradient(135deg, #008A3C, #00A651);
   padding: 4rem 0 3rem;
   color: white;
 }
