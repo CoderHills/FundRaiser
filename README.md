@@ -1,14 +1,14 @@
-# Harambee - Crowdfunding Platform
+Harambee - funding Platform
 
 A full-stack crowdfunding platform for fundraising campaigns in Kenya.
 
-## Tech Stack
+Tech Stack
 
 - **Backend**: Flask (Python) + PostgreSQL
 - **Frontend**: React + Vite
 - **Payments**: M-Pesa Daraja API (sandbox mode)
 
-## Features
+Features
 
 - User authentication (register/login)
 - Create and manage fundraising campaigns
@@ -16,7 +16,6 @@ A full-stack crowdfunding platform for fundraising campaigns in Kenya.
 - Make donations via M-Pesa
 - User profile and settings
 
-## Quick Start
 
 ### Backend
 
@@ -44,6 +43,6 @@ App runs at http://localhost:3000
 ## Project Structure
 
 ```
-harambee-backend/     # Flask API
-harambee-frontend/   # React app
+harambee-backend/  
+harambee-frontend/  
 ```
