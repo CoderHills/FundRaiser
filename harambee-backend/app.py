@@ -7,7 +7,6 @@ from extensions import db, migrate, ma
 from routes import campaigns_bp, donations_bp, categories_bp, auth_bp, admin_bp
 from services.mpesa import mpesa_service
 from models import User, Campaign, Category, CampaignUpdate, Donation
-from seed import seed
 
 
 def create_app(config_name: str = None) -> Flask:
@@ -26,11 +25,38 @@ def create_app(config_name: str = None) -> Flask:
             try:
                 db.create_all()
                 print("Database tables created successfully")
-                # Run seed to create categories and admin user
-                try:
-                    seed()
-                except Exception as e:
-                    print(f"Seed warning: {e}")
+                
+                # Seed categories
+                categories = [
+                    {"id": "medical", "label": "Medical"},
+                    {"id": "education", "label": "Education"},
+                    {"id": "emergency", "label": "Emergency"},
+                    {"id": "memorial", "label": "Memorial"},
+                    {"id": "community", "label": "Community"},
+                    {"id": "wedding", "label": "Wedding"},
+                    {"id": "business", "label": "Business"},
+                    {"id": "church", "label": "Church"},
+                ]
+                for cat_data in categories:
+                    from models.campaign import Category
+                    if not Category.query.get(cat_data["id"]):
+                        cat = Category(id=cat_data["id"], label=cat_data["label"])
+                        db.session.add(cat)
+                
+                # Create admin user if no admin exists
+                if not User.query.filter_by(is_admin=True).first():
+                    default_admin = User(
+                        email="admin@harambee.africa",
+                        name="System Admin",
+                        is_admin=True,
+                        is_active=True
+                    )
+                    default_admin.set_password("admin123")
+                    db.session.add(default_admin)
+                    print("Created default admin user: admin@harambee.africa (password: admin123)")
+                
+                db.session.commit()
+                print("Database seeded successfully!")
             except Exception as e:
                 print(f"Table creation warning: {e}")
     except Exception as e:
