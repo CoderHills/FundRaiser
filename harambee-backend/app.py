@@ -26,19 +26,14 @@ def create_app(config_name: str = None) -> Flask:
     
     mpesa_service.init_app(app)
 
-    # Handle CORS_ORIGINS - allow all in development, specific origins in production
-    cors_origins = app.config.get("CORS_ORIGINS", "*")
-    if isinstance(cors_origins, str):
-        cors_origins = [o.strip() for o in cors_origins.split(",")]
-    
-    # If no specific origins configured, allow all for debugging
-    if not cors_origins or cors_origins == [""]:
-        cors_origins = "*"
+    # Allow all CORS for now - can be restricted later
+    # Get CORS_ORIGINS from environment, default to allow all
+    cors_origins = os.environ.get("CORS_ORIGINS", "*")
     
     # Log the CORS origins for debugging
     print(f"CORS origins: {cors_origins}")
     
-    CORS(app, origins=cors_origins, supports_credentials=True, methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"], allow_headers=["Content-Type", "Authorization"])
+    CORS(app, origins=cors_origins, supports_credentials=True, methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"], allow_headers=["Content-Type", "Authorization", "Accept", "Origin"], expose_headers=["Content-Length", "X-Requested-With"])
 
 
     app.register_blueprint(auth_bp)
