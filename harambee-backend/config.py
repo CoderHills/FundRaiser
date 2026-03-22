@@ -11,7 +11,7 @@ class Config:
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # Allow Vercel domains and localhost in development
-    default_origins = "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173"
+    default_origins = "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173,https://hrambee.vercel.app,https://harambee-backend.onrender.com"
     # In production, add your Vercel URL
     vercel_url = os.environ.get("VERCEL_URL", "")
     if vercel_url:
