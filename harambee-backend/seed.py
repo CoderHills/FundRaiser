@@ -35,7 +35,8 @@ def seed():
                 cat = Category(id=cat_data["id"], label=cat_data["label"])
                 db.session.add(cat)
         
-        # Create admin user if ADMIN_EMAIL is set
+        # Create admin user if ADMiN_EMAIL env var is set. Otherwise, create a default admin if no admin exists.
+
         admin_email = os.environ.get("ADMIN_EMAIL")
         if admin_email:
             admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")
