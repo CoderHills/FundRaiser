@@ -7,6 +7,7 @@ from extensions import db, migrate, ma
 from routes import campaigns_bp, donations_bp, categories_bp, auth_bp, admin_bp
 from services.mpesa import mpesa_service
 from models import User, Campaign, Category, CampaignUpdate, Donation
+from seed import seed
 
 
 def create_app(config_name: str = None) -> Flask:
@@ -25,6 +26,11 @@ def create_app(config_name: str = None) -> Flask:
             try:
                 db.create_all()
                 print("Database tables created successfully")
+                # Run seed to create categories and admin user
+                try:
+                    seed()
+                except Exception as e:
+                    print(f"Seed warning: {e}")
             except Exception as e:
                 print(f"Table creation warning: {e}")
     except Exception as e:
