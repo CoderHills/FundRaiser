@@ -1,3 +1,4 @@
+import os
 import hashlib
 import hmac
 import base64
@@ -22,8 +23,6 @@ def check_password_hash(password_hash, password):
         return hmac.compare_digest(pwdhash, pwdhash_check)
     except Exception:
         return False
-
-import os
 
 class User(db.Model):
     __tablename__ = "users"

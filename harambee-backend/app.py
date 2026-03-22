@@ -15,13 +15,22 @@ def create_app(config_name: str = None) -> Flask:
     app = Flask(__name__)
     app.config.from_object(config.get(config_name, config["default"]))
 
-    db.init_app(app)
-    migrate.init_app(app, db)
+    try:
+        db.init_app(app)
+        migrate.init_app(app, db)
+    except Exception as e:
+        app.logger.warning(f"Database initialization skipped: {e}")
+    
     ma.init_app(app)
     
     mpesa_service.init_app(app)
 
-    CORS(app, origins=app.config["CORS_ORIGINS"], supports_credentials=True)
+    # Handle CORS_ORIGINS as a list
+    cors_origins = app.config.get("CORS_ORIGINS", "*")
+    if isinstance(cors_origins, str):
+        cors_origins = [o.strip() for o in cors_origins.split(",")]
+    
+    CORS(app, origins=cors_origins, supports_credentials=True)
 
 
     app.register_blueprint(auth_bp)
@@ -45,7 +54,10 @@ def create_app(config_name: str = None) -> Flask:
 
     @app.errorhandler(500)
     def internal_error(e):
-        db.session.rollback()
+        try:
+            db.session.rollback()
+        except:
+            pass
         return jsonify({"error": "Internal server error"}), 500
 
     return app
