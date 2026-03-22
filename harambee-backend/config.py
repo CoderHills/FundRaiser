@@ -6,9 +6,12 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URL", "postgresql://postgres:password@localhost:5432/mchanga_db"
-    )
+    # Use psycopg3 driver for PostgreSQL (use postgresql+psycopg:// for psycopg v3)
+    db_url = os.environ.get("DATABASE_URL", "")
+    if db_url and not db_url.startswith("postgresql+"):
+        # Convert postgresql:// to postgresql+psycopg:// for psycopg3
+        db_url = db_url.replace("postgresql://", "postgresql+psycopg://", 1)
+    SQLALCHEMY_DATABASE_URI = db_url or "postgresql+psycopg://postgres:password@localhost:5432/mchanga_db"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # Allow Vercel domains and localhost in development
     default_origins = "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173,https://hrambee.vercel.app,https://harambee-backend.onrender.com"
