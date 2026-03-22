@@ -17,17 +17,24 @@ export default function Navbar({ page, navigate }) {
   return (
     <nav className="navbar">
       <div className="nav-inner">
-        <button className="nav-logo" onClick={() => navigate("home")}>
+        <button className={`nav-logo ${page === 'home' ? 'active' : ''}`} onClick={() => navigate("home")}>
           <img src="/images/donation.jpg" alt="Harambee" style={{height: '70px', width: 'auto'}} />
         </button>
 
         <div className={`nav-links ${menuOpen ? "open" : ""}`}>
-          {user && (
+          <button
+            className={`nav-link ${page === "explore" ? "active" : ""}`}
+            onClick={() => { navigate("explore"); setMenuOpen(false); }}
+          >
+            Explore
+          </button>
+
+          {user && user.is_admin && (
             <button
-              className={`nav-link ${page === "explore" ? "active" : ""}`}
-              onClick={() => { navigate("explore"); setMenuOpen(false); }}
+              className={`nav-link ${page === "admin" ? "active" : ""}`}
+              onClick={() => { navigate("admin"); setMenuOpen(false); }}
             >
-              Explore
+              Admin
             </button>
           )}
 
@@ -41,7 +48,7 @@ export default function Navbar({ page, navigate }) {
                   <span className="nav-greeting">{isNewUser ? 'Welcome,' : 'Welcome back,'}</span>
                   <span className="nav-user-name">{user.name}</span>
                 </button>
-                <button className="nav-logout" onClick={logout}>
+                <button className="nav-logout" onClick={() => { logout(); navigate('home'); }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>

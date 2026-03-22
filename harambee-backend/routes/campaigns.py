@@ -36,7 +36,8 @@ def token_required(f):
 
 @campaigns_bp.route("/", methods=["GET"])
 def list_campaigns():
-    query = Campaign.query
+    # Only show active campaigns to public users
+    query = Campaign.query.filter_by(status='active')
 
     category = request.args.get("category")
     if category:
@@ -89,6 +90,17 @@ def create_campaign(current_user):
     if not data:
         return jsonify({"error": "Request body must be JSON"}), 400
 
+    # Check if user already has an active campaign
+    existing_campaign = Campaign.query.filter_by(
+        user_id=current_user.id, 
+        status='active'
+    ).first()
+    if existing_campaign:
+        return jsonify({
+            "error": "You already have an active campaign. Only one active campaign per user is allowed.",
+            "existing_campaign": campaign_schema.dump(existing_campaign)
+        }), 400
+
     required = ["title", "slug", "category_id", "organizer", "target"]
     missing = [f for f in required if not data.get(f)]
     if missing:
@@ -101,6 +113,7 @@ def create_campaign(current_user):
         title=data["title"],
         slug=data["slug"],
         category_id=data["category_id"],
+        user_id=current_user.id,
         organizer=data["organizer"],
         location=data.get("location"),
         target=data["target"],
@@ -108,12 +121,14 @@ def create_campaign(current_user):
         image=data.get("image"),
         description=data.get("description"),
         story=data.get("story"),
-        verified=data.get("verified", False),
-        featured=data.get("featured", False),
+        status='pending',  # New campaigns require admin approval
     )
     db.session.add(campaign)
     db.session.commit()
-    return jsonify(campaign_schema.dump(campaign)), 201
+    return jsonify({
+        "message": "Campaign created and pending admin approval",
+        "campaign": campaign_schema.dump(campaign)
+    }), 201
 
 
 @campaigns_bp.route("/<slug>", methods=["PUT", "PATCH"])

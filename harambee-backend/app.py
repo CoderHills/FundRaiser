@@ -4,7 +4,7 @@ from flask_cors import CORS
 
 from config import config
 from extensions import db, migrate, ma
-from routes import campaigns_bp, donations_bp, categories_bp, auth_bp
+from routes import campaigns_bp, donations_bp, categories_bp, auth_bp, admin_bp
 from services.mpesa import mpesa_service
 
 
@@ -28,6 +28,7 @@ def create_app(config_name: str = None) -> Flask:
     app.register_blueprint(campaigns_bp)
     app.register_blueprint(donations_bp)
     app.register_blueprint(categories_bp)
+    app.register_blueprint(admin_bp)
 
 
     @app.route("/api/health")

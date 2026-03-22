@@ -115,19 +115,7 @@ export default function HomePage({ navigate, onDonate }) {
           </div>
         </section>
 
-        <section className="ussd-banner">
-          <div className="container ussd-inner">
-            <div className="ussd-text">
-              <h2>No smartphone? No problem.</h2>
-              <p>Create and manage your fundraiser via USSD — works on any phone. Kenya only.</p>
-            </div>
-            <div className="ussd-code">
-              <div className="ussd-dial">Dial</div>
-              <div className="ussd-number">*483*57#</div>
-              <div className="ussd-dial">on any network</div>
-            </div>
-          </div>
-        </section>
+
 
         <section className="cta-section">
           <div className="container cta-inner">

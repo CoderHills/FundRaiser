@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { CATEGORIES } from "../data/campaigns";
-import { getCampaigns } from "../utils/api";
+import { getCampaigns, apiFetch } from "../utils/api";
 import { useAuth } from "../contexts/AuthContext.jsx";
 import CampaignCard from "../components/CampaignCard";
 import "./ExplorePage.css";
@@ -22,11 +22,7 @@ export default function ExplorePage({ navigate, onDonate }) {
   const [sort, setSort] = useState("trending");
   const [totalCount, setTotalCount] = useState(0);
 
-  useEffect(() => {
-    if (!user) {
-      navigate("dashboard");
-    }
-  }, [user, navigate]);
+
 
   const [debouncedSearch, setDebouncedSearch] = useState("");
   useEffect(() => {
@@ -65,6 +61,17 @@ export default function ExplorePage({ navigate, onDonate }) {
   useEffect(() => {
     loadCampaigns();
   }, [loadCampaigns]);
+
+  const handleSuspendCampaign = async (campaign) => {
+    if (!window.confirm(`Are you sure you want to suspend "${campaign.title}"?`)) return;
+    try {
+      await apiFetch(`/admin/campaigns/${campaign.id}/suspend`, { method: 'PUT' });
+      loadCampaigns();
+    } catch (err) {
+      console.error('Failed to suspend campaign:', err);
+      alert('Failed to suspend campaign');
+    }
+  };
 
   const filtered = useMemo(() => {
     let list = [...campaigns];
@@ -159,7 +166,7 @@ export default function ExplorePage({ navigate, onDonate }) {
           ) : (
             <div className="grid-3">
               {filtered.map((c) => (
-                <CampaignCard key={c.slug} campaign={c} navigate={navigate} onDonate={onDonate} />
+                <CampaignCard key={c.slug} campaign={c} navigate={navigate} onDonate={onDonate} onSuspend={handleSuspendCampaign} />
               ))}
             </div>
           )}

@@ -19,9 +19,15 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-    apiFetch('/auth/me')
+      apiFetch('/auth/me')
         .then((res) => setUser(res.user))
-        .catch(() => localStorage.removeItem('token'))
+        .catch((err) => {
+          localStorage.removeItem('token');
+          // If the error is about suspension, show an alert
+          if (err.message && err.message.includes('suspended')) {
+            alert('Your account has been suspended. Please contact the administrator.');
+          }
+        })
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
@@ -29,11 +35,18 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    const res = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
-    localStorage.setItem('token', res.token);
-    setUser(res.user);
-    setIsNewUser(false);
-    return res;
+    try {
+      const res = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+      localStorage.setItem('token', res.token);
+      setUser(res.user);
+      setIsNewUser(false);
+      return res;
+    } catch (error) {
+      if (error.message && error.message.includes('suspended')) {
+        throw new Error('Your account has been suspended. Please contact the administrator.');
+      }
+      throw error;
+    }
   };
 
   const register = async (email, password, name, phone) => {

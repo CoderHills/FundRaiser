@@ -3,6 +3,7 @@ import { useAuth } from "../contexts/AuthContext.jsx";
 import "../styles/global.css";
 
 export default function DashboardPage({ navigate, options }) {
+  const { user, login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(options?.register ? false : true);
   const [formData, setFormData] = useState({
     phone: "",
@@ -11,11 +12,14 @@ export default function DashboardPage({ navigate, options }) {
     email: "",
   });
 
+  if (user) {
+    navigate("profile");
+    return null;
+  }
+
   const handleInput = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
-
-  const { login, register } = useAuth();
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {

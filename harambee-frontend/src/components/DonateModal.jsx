@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { formatKESFull } from "../utils/helpers";
+import { donate } from "../utils/api";
 import "./DonateModal.css";
 
 const QUICK_AMOUNTS = [500, 1000, 2000, 5000, 10000];
@@ -17,6 +18,7 @@ export default function DonateModal({ campaign, onClose }) {
   const [method, setMethod] = useState("mpesa");
   const [phone, setPhone] = useState("");
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [anonymous, setAnonymous] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -28,12 +30,32 @@ export default function DonateModal({ campaign, onClose }) {
     setCustomAmount(false);
   };
 
-  const handleSubmit = () => {
+  const canContinue = () => {
+    if (step === 1) return numAmount > 0;
+    if (step === 2) return phone && (name || anonymous) && email;
+    return true;
+  };
+
+  const handleSubmit = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      // Call the backend API to create donation
+      await donate(campaign.id, {
+        campaign_id: campaign.id,
+        amount: numAmount,
+        phone: phone,
+        donor_name: anonymous ? 'Anonymous' : name,
+        message: message,
+        anonymous: anonymous,
+        email: email,
+      });
       setStep(4);
-    }, 2200);
+    } catch (error) {
+      console.error('Donation failed:', error);
+      alert('Donation failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -127,7 +149,6 @@ export default function DonateModal({ campaign, onClose }) {
                     className={`pm-option ${method === pm.id ? "active" : ""}`}
                     onClick={() => setMethod(pm.id)}
                   >
-                    
                     <span className="pm-name">{pm.label}</span>
                     <span className="pm-desc">{pm.desc}</span>
                   </button>
@@ -136,7 +157,6 @@ export default function DonateModal({ campaign, onClose }) {
 
               {(method === "mpesa" || method === "airtel") && (
                 <div className="dm-input-group" style={{ marginTop: "1.25rem" }}>
-                  
                   <input
                     type="tel"
                     placeholder="07XX XXX XXX"
@@ -163,30 +183,21 @@ export default function DonateModal({ campaign, onClose }) {
                   placeholder="Your name (shown on campaign)"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  style={{ marginTop: "0.75rem" }}
+                  style={{ marginTop: "0.75rem", width: "100%" }}
                 />
               )}
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="dm-footer">
-              <button className="btn btn-ghost" onClick={() => setStep(1)}>
-                ← Back
-              </button>
-              <button
-                className="btn btn-primary"
-                disabled={!phone || (!name && !anonymous)}
-                onClick={() => setStep(3)}
-                style={{ marginLeft: "auto" }}
-              >
-                Continue →
-              </button>
+              
+              <input
+                type="email"
+                placeholder="Your email (for receipt)"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={{ marginTop: "0.75rem", width: "100%" }}
+              />
             </div>
           )}
 
           {step === 3 && (
-
             <div className="dm-section animate-fadeup">
               <div className="confirm-box">
                 <div className="confirm-row">
@@ -218,6 +229,12 @@ export default function DonateModal({ campaign, onClose }) {
                   <div className="confirm-row">
                     <span>From</span>
                     <span>{name}</span>
+                  </div>
+                )}
+                {email && (
+                  <div className="confirm-row">
+                    <span>Email</span>
+                    <span>{email}</span>
                   </div>
                 )}
                 {anonymous && (
@@ -260,7 +277,7 @@ export default function DonateModal({ campaign, onClose }) {
             {step < 3 ? (
               <button
                 className="btn btn-primary"
-                disabled={step === 1 && !numAmount}
+                disabled={!canContinue()}
                 onClick={() => setStep(step + 1)}
                 style={{ marginLeft: "auto" }}
               >

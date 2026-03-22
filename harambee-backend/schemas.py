@@ -65,7 +65,7 @@ class CampaignListSchema(ma.SQLAlchemyAutoSchema):
             "id", "title", "slug", "category_id", "organizer",
             "location", "target", "raised", "donors", "days_left",
             "verified", "featured", "image", "description",
-            "created_at",
+            "created_at", "status",
         )
 
     category = ma.Nested(CategorySchema, attribute="category_ref", dump_only=True)

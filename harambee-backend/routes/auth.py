@@ -58,7 +58,7 @@ def register():
     
     return jsonify({
         'message': 'User created',
-        'user': {'id': user.id, 'email': user.email, 'name': user.name},
+        'user': {'id': user.id, 'email': user.email, 'name': user.name, 'is_admin': user.is_admin, 'is_active': user.is_active},
         'token': token
     })
 
@@ -69,6 +69,9 @@ def login():
     user = User.query.filter_by(email=data.get('email')).first()
     
     if user and user.check_password(data.get('password')):
+        if not user.is_active:
+            return jsonify({'error': 'Your account has been suspended. Please contact the administrator.'}), 403
+        
         token = jwt.encode({
             'user_id': user.id,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
@@ -76,7 +79,7 @@ def login():
         
         return jsonify({
             'message': 'Login successful',
-            'user': {'id': user.id, 'email': user.email, 'name': user.name},
+            'user': {'id': user.id, 'email': user.email, 'name': user.name, 'is_admin': user.is_admin, 'is_active': user.is_active},
             'token': token
         })
     
@@ -85,12 +88,17 @@ def login():
 @auth_bp.route('/me', methods=['GET'])
 @token_required
 def get_me(current_user):
+    if not current_user.is_active:
+        return jsonify({'error': 'Your account has been suspended'}), 403
+    
     return jsonify({
         'user': {
             'id': current_user.id,
             'email': current_user.email,
             'name': current_user.name,
-            'phone': current_user.phone
+            'phone': current_user.phone,
+            'is_admin': current_user.is_admin,
+            'is_active': current_user.is_active
         }
     })
 

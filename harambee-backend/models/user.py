@@ -34,6 +34,8 @@ class User(db.Model):
     name = db.Column(db.String(255), nullable=False)
     phone = db.Column(db.String(20))
     verified = db.Column(db.Boolean, default=False)
+    is_admin = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     def set_password(self, password):

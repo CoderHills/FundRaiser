@@ -10,7 +10,13 @@ class Config:
         "DATABASE_URL", "postgresql://postgres:password@localhost:5432/mchanga_db"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173").split(",")
+    # Allow Vercel domains and localhost in development
+    default_origins = "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173"
+    # In production, add your Vercel URL
+    vercel_url = os.environ.get("VERCEL_URL", "")
+    if vercel_url:
+        default_origins += f",https://{vercel_url},https://{vercel_url}.vercel.app"
+    CORS_ORIGINS = os.environ.get("CORS_ORIGINS", default_origins).split(",")
     
     MPESA_CONSUMER_KEY = os.environ.get("MPESA_CONSUMER_KEY", "rPllpknnCWMyJ8TfbCPmZOWCopajTQVu9b7tDGphvFttAcyP")
     MPESA_CONSUMER_SECRET = os.environ.get("MPESA_CONSUMER_SECRET", "ikWgQpbZWSvfunUNLvr7gu9CDsuVw4EVweLbfGGX0KGeBxHpcCiE03Di30AwxHlM")

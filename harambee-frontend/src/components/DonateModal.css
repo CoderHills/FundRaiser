@@ -1,6 +1,12 @@
 .donate-modal {
   padding: 0;
   overflow: hidden;
+  max-width: 800px;
+  width: 95%;
+  max-height: 90vh;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .dm-header {
@@ -102,6 +108,8 @@
 
 .dm-body {
   padding: 1.5rem;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .dm-section {

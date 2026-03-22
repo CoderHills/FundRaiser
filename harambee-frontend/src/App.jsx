@@ -7,6 +7,7 @@ import CampaignPage from "./pages/CampaignPage";
 import CreatePage from "./pages/CreatePage";
 import DashboardPage from "./pages/DashboardPage";
 import ProfilePage from "./pages/ProfilePage";
+import AdminPage from "./pages/AdminPage";
 import DonateModal from "./components/DonateModal";
 import "./styles/global.css";
 
@@ -47,8 +48,9 @@ export default function App() {
       {page === "create" && <CreatePage navigate={navigate} />}
       {page === "dashboard" && <DashboardPage navigate={navigate} options={dashboardOptions} />}
       {page === "profile" && <ProfilePage navigate={navigate} onDonate={setDonateTarget} />}
+      {page === "admin" && <AdminPage navigate={navigate} />}
 
-      <Footer navigate={navigate} />
+      {page !== "admin" && <Footer navigate={navigate} />}
 
       {donateTarget && (
         <DonateModal

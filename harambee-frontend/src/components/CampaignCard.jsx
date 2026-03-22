@@ -1,8 +1,10 @@
+import { useAuth } from "../contexts/AuthContext";
 import { formatKES, pct, getCategoryColor } from "../utils/helpers";
 import { CATEGORIES } from "../data/campaigns";
 import "./CampaignCard.css";
 
-export default function CampaignCard({ campaign, navigate, onDonate }) {
+export default function CampaignCard({ campaign, navigate, onDonate, onSuspend }) {
+  const { user } = useAuth();
   const cat = CATEGORIES.find((c) => c.id === campaign.category_id);
 
   const progress = pct(campaign.raised, campaign.target);
@@ -36,6 +38,14 @@ export default function CampaignCard({ campaign, navigate, onDonate }) {
         </div>
 
         <div className="cc-footer">
+          {user && user.is_admin && campaign.status === 'active' && (
+            <button
+              className="btn btn-sm btn-suspend"
+              onClick={(e) => { e.stopPropagation(); onSuspend && onSuspend(campaign); }}
+            >
+              Suspend
+            </button>
+          )}
           <div className="cc-organizer">
             <div className="avatar avatar-sm">
               {(campaign.organizer || '').split(" ").map((w) => w[0] || '').slice(0, 2).join("")}

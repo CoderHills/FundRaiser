@@ -1,4 +1,5 @@
-const API_BASE = 'http://localhost:5000/api';
+// Use environment variable in production, localhost in development
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const apiFetch = async (endpoint, options = {}) => {
 
@@ -41,7 +42,14 @@ export const createCampaign = (data) => apiFetch('/campaigns/', {
   body: JSON.stringify(data),
 });
 
-export const donate = (campaignId, data) => apiFetch(`/donations`, {
+export const donate = (campaignId, data) => apiFetch(`/donations/`, {
   method: 'POST',
-  body: JSON.stringify(data),
+  body: JSON.stringify({
+    campaign_id: campaignId,
+    amount: data.amount,
+    phone: data.phone,
+    donor_name: data.donor_name,
+    message: data.message,
+    anonymous: data.anonymous,
+  }),
 });

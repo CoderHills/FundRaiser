@@ -379,55 +379,6 @@
   line-height: 1.65;
 }
 
-/* USSD Banner */
-.ussd-banner {
-  background: linear-gradient(135deg, var(--sky), #0a5fa0);
-  padding: 3rem 0;
-}
-
-.ussd-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.ussd-text h2 {
-  font-size: 1.6rem;
-  color: white;
-  margin-bottom: 0.5rem;
-}
-.ussd-text p {
-  color: rgba(255,255,255,0.8);
-  font-size: 0.95rem;
-}
-
-.ussd-code {
-  background: rgba(255,255,255,0.12);
-  border: 2px solid rgba(255,255,255,0.3);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem 2.5rem;
-  text-align: center;
-}
-
-.ussd-dial {
-  font-size: 0.78rem;
-  color: rgba(255,255,255,0.7);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-family: 'Sora', sans-serif;
-  font-weight: 600;
-}
-
-.ussd-number {
-  font-family: 'DM Serif Display', serif;
-  font-size: 2rem;
-  color: var(--sun);
-  margin: 0.25rem 0;
-  letter-spacing: 0.05em;
-}
-
 /* Testimonials */
 .testimonial-card {
   padding: 1.75rem;
