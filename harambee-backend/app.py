@@ -6,6 +6,7 @@ from config import config
 from extensions import db, migrate, ma
 from routes import campaigns_bp, donations_bp, categories_bp, auth_bp, admin_bp
 from services.mpesa import mpesa_service
+from models import User, Campaign, Category, CampaignUpdate, Donation
 
 
 def create_app(config_name: str = None) -> Flask:
@@ -19,6 +20,13 @@ def create_app(config_name: str = None) -> Flask:
     try:
         db.init_app(app)
         migrate.init_app(app, db)
+        # Try to create tables if they don't exist
+        with app.app_context():
+            try:
+                db.create_all()
+                print("Database tables created successfully")
+            except Exception as e:
+                print(f"Table creation warning: {e}")
     except Exception as e:
         app.logger.warning(f"Database initialization skipped: {e}")
     
