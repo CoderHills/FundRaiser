@@ -10,7 +10,8 @@ from services.mpesa import mpesa_service
 
 def create_app(config_name: str = None) -> Flask:
     if config_name is None:
-        config_name = os.environ.get("FLASK_ENV", "development")
+        # Default to production if not set
+        config_name = os.environ.get("FLASK_ENV", "production")
 
     app = Flask(__name__)
     app.config.from_object(config.get(config_name, config["default"]))
